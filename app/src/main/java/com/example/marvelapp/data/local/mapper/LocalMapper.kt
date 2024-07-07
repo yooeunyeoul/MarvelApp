@@ -1,11 +1,11 @@
 package com.example.marvelapp.data.local.mapper
 
 import com.example.marvelapp.data.local.entity.CharacterEntity
-import com.example.marvelapp.domain.model.Character
+import com.example.marvelapp.domain.model.MarvelCharacter
 import com.example.marvelapp.domain.model.Thumbnail
 
-fun CharacterEntity.toDomain(): Character {
-    return Character(
+fun CharacterEntity.toDomain(): MarvelCharacter {
+    return MarvelCharacter(
         id = this.id,
         name = this.name,
         description = this.description,
@@ -14,7 +14,7 @@ fun CharacterEntity.toDomain(): Character {
     )
 }
 
-fun Character.toEntity(): CharacterEntity {
+fun MarvelCharacter.toEntity(): CharacterEntity {
     return CharacterEntity(
         id = this.id,
         name = this.name,

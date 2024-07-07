@@ -1,6 +1,6 @@
 package com.example.marvelapp.presentation.model
 
-data class UiCharacter(
+data class MarvelUiCharacter(
     val id: Int,
     val name: String,
     val description: String,
