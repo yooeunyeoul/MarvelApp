@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -20,6 +22,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = gradleLocalProperties(rootDir, providers)
+        val marvelPublicKey = properties["MARVEL_PUBLIC_KEY"] ?: ""
+        val marvelPrivateKey = properties["MARVEL_PRIVATE_KEY"] ?: ""
+
+        buildConfigField("String", "MARVEL_PUBLIC_KEY", "\"$marvelPublicKey\"")
+        buildConfigField("String", "MARVEL_PRIVATE_KEY", "\"$marvelPrivateKey\"")
     }
 
     buildTypes {
@@ -40,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -81,10 +91,6 @@ dependencies {
 
         // coil
         implementation(libs.coil.compose)
-
-        // swipe
-        implementation(libs.androidx.compose.material)
-//    implementation(libs.androidx.compose.material.swipe.to.refresh)
 
         // Test
         testImplementation(libs.junit)
