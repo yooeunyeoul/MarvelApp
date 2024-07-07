@@ -1,12 +1,12 @@
 package com.example.marvelapp.domain.mapper
 
-import com.example.marvelapp.domain.model.Character
+import com.example.marvelapp.domain.model.MarvelCharacter
 import com.example.marvelapp.domain.model.Thumbnail
-import com.example.marvelapp.presentation.model.UiCharacter
+import com.example.marvelapp.presentation.model.MarvelUiCharacter
 import com.example.marvelapp.presentation.model.UiThumbnail
 
-fun Character.toUiModel(): UiCharacter {
-    return UiCharacter(
+fun MarvelCharacter.toUiModel(): MarvelUiCharacter {
+    return MarvelUiCharacter(
         id = this.id,
         name = this.name,
         description = this.description,
@@ -15,8 +15,8 @@ fun Character.toUiModel(): UiCharacter {
     )
 }
 
-fun UiCharacter.toDomain(): Character {
-    return Character(
+fun MarvelUiCharacter.toDomain(): MarvelCharacter {
+    return MarvelCharacter(
         id = this.id,
         name = this.name,
         description = this.description,
