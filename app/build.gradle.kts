@@ -92,6 +92,11 @@ dependencies {
         // coil
         implementation(libs.coil.compose)
 
+        // Room
+        implementation(libs.room.runtime)
+        implementation(libs.room.ktx)
+        kapt(libs.room.compiler)
+
         // Test
         testImplementation(libs.junit)
         testImplementation(libs.mockito.core)
