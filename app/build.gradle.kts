@@ -1,6 +1,10 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hiltPlugin)
+    alias(libs.plugins.kapt)
 }
 
 android {
@@ -18,6 +22,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = gradleLocalProperties(rootDir, providers)
+        val marvelPublicKey = properties["MARVEL_PUBLIC_KEY"] ?: ""
+        val marvelPrivateKey = properties["MARVEL_PRIVATE_KEY"] ?: ""
+
+        buildConfigField("String", "MARVEL_PUBLIC_KEY", "\"$marvelPublicKey\"")
+        buildConfigField("String", "MARVEL_PRIVATE_KEY", "\"$marvelPrivateKey\"")
     }
 
     buildTypes {
@@ -38,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -51,19 +63,52 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    dependencies {
+        implementation(libs.androidx.core.ktx)
+        implementation(libs.androidx.lifecycle.runtime.ktx)
+        implementation(libs.androidx.activity.compose)
+        implementation(platform(libs.androidx.compose.bom))
+        implementation(libs.androidx.ui)
+        implementation(libs.androidx.ui.graphics)
+        implementation(libs.androidx.ui.tooling.preview)
+        implementation(libs.androidx.material3)
+
+        // lifecycle compose
+        implementation(libs.lifecycle.runtime.compose)
+
+        // navigation compose
+        implementation(libs.navigation.compose)
+
+        // Hilt
+        implementation(libs.hilt.android)
+        kapt(libs.hilt.compiler)
+        implementation(libs.hilt.navigation.compose)
+
+        // retrofit
+        implementation(libs.retrofit)
+        implementation(libs.retrofit.gson)
+        implementation(libs.gson)
+
+        // coil
+        implementation(libs.coil.compose)
+
+        // Room
+        implementation(libs.room.runtime)
+        implementation(libs.room.ktx)
+        kapt(libs.room.compiler)
+
+        // Test
+        testImplementation(libs.junit)
+        testImplementation(libs.mockito.core)
+        testImplementation(libs.mockito.inline)
+        testImplementation(libs.coroutines.test)
+        testImplementation(libs.kotlin.test.junit)
+        androidTestImplementation(libs.androidx.junit)
+        androidTestImplementation(libs.androidx.espresso.core)
+        androidTestImplementation(platform(libs.androidx.compose.bom))
+        androidTestImplementation(libs.androidx.ui.test.junit4)
+        debugImplementation(libs.androidx.ui.tooling)
+        debugImplementation(libs.androidx.ui.test.manifest)
+    }
+
 }
