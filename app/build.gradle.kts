@@ -97,6 +97,9 @@ dependencies {
         implementation(libs.room.ktx)
         kapt(libs.room.compiler)
 
+        implementation(libs.okhttp)
+        implementation(libs.loggingInterceptor)
+
         // Test
         testImplementation(libs.junit)
         testImplementation(libs.mockito.core)
