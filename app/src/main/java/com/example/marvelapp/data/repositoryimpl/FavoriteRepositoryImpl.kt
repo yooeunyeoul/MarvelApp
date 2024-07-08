@@ -5,6 +5,8 @@ import com.example.marvelapp.data.local.mapper.toDomain
 import com.example.marvelapp.data.local.mapper.toEntity
 import com.example.marvelapp.domain.model.MarvelCharacter
 import com.example.marvelapp.domain.repository.FavoriteRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FavoriteRepositoryImpl @Inject constructor(
@@ -15,8 +17,10 @@ class FavoriteRepositoryImpl @Inject constructor(
         return favoriteDao.getAllFavorites().map { it.id }
     }
 
-    override suspend fun getFavoriteCharacters(): List<MarvelCharacter> {
-        return favoriteDao.getAllFavorites().map { it.toDomain() }
+    override suspend fun getFavoriteCharacters(): Flow<List<MarvelCharacter>> {
+        return favoriteDao.getAllFavoritesFlow().map { entities ->
+            entities.map { it.toDomain() }
+        }
     }
 
     override suspend fun saveFavoriteCharacter(character: MarvelCharacter) {
