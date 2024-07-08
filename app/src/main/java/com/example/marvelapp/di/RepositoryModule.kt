@@ -22,9 +22,9 @@ object RepositoryModule {
     fun provideCharacterRepository(
         apiService: MarvelApiService,
         @Named("apiKey") apiKey: String,
-        @Named("timestamp") timestamp: String,
+        @Named("privateKey") privateKey: String,
     ): CharacterRepository {
-        return CharacterRepositoryImpl(apiService, apiKey, timestamp)
+        return CharacterRepositoryImpl(apiService, apiKey, privateKey)
     }
 
     @Provides

@@ -6,7 +6,7 @@ import com.example.marvelapp.domain.mapper.toUiModel
 import com.example.marvelapp.domain.usecase.AddFavoriteCharacterUseCase
 import com.example.marvelapp.domain.usecase.GetCharactersUseCase
 import com.example.marvelapp.domain.usecase.RemoveFavoriteCharacterUseCase
-import com.example.marvelapp.presentation.model.MarvelUiCharacter
+import com.example.marvelapp.presentation.model.UiMarvelCharacter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,8 +20,8 @@ class SearchViewModel @Inject constructor(
     private val removeFavoriteCharacterUseCase: RemoveFavoriteCharacterUseCase
 ) : ViewModel() {
 
-    private val _searchResults = MutableStateFlow<List<MarvelUiCharacter>>(emptyList())
-    val searchResults: StateFlow<List<MarvelUiCharacter>> = _searchResults
+    private val _searchResults = MutableStateFlow<List<UiMarvelCharacter>>(emptyList())
+    val searchResults: StateFlow<List<UiMarvelCharacter>> = _searchResults
 
     fun searchCharacters(nameStartsWith: String, offset: Int = 0, limit: Int = 10) {
         viewModelScope.launch {
@@ -30,13 +30,13 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun addFavorite(character: MarvelUiCharacter) {
+    fun addFavorite(character: UiMarvelCharacter) {
         viewModelScope.launch {
             addFavoriteCharacterUseCase(character)
         }
     }
 
-    fun removeFavorite(character: MarvelUiCharacter) {
+    fun removeFavorite(character: UiMarvelCharacter) {
         viewModelScope.launch {
             removeFavoriteCharacterUseCase(character)
         }

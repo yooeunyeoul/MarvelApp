@@ -1,26 +1,24 @@
 package com.example.marvelapp.domain.mapper
 
 import com.example.marvelapp.domain.model.MarvelCharacter
-import com.example.marvelapp.domain.model.Thumbnail
-import com.example.marvelapp.presentation.model.MarvelUiCharacter
-import com.example.marvelapp.presentation.model.UiThumbnail
+import com.example.marvelapp.presentation.model.UiMarvelCharacter
 
-fun MarvelCharacter.toUiModel(): MarvelUiCharacter {
-    return MarvelUiCharacter(
+fun MarvelCharacter.toUiModel(): UiMarvelCharacter {
+    return UiMarvelCharacter(
         id = this.id,
         name = this.name,
         description = this.description,
-        thumbnail = UiThumbnail(this.thumbnail.path, this.thumbnail.extension),
+        thumbnailUrl = this.thumbnailUrl,
         isFavorite = this.isFavorite
     )
 }
 
-fun MarvelUiCharacter.toDomain(): MarvelCharacter {
+fun UiMarvelCharacter.toDomain(): MarvelCharacter {
     return MarvelCharacter(
         id = this.id,
         name = this.name,
         description = this.description,
-        thumbnail = Thumbnail(path = this.thumbnail.path, extension = this.thumbnail.extension),
+        thumbnailUrl = this.thumbnailUrl,
         isFavorite = this.isFavorite
     )
 }
