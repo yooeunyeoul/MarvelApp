@@ -3,17 +3,22 @@ package com.example.marvelapp.data.local.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.marvelapp.data.local.entity.CharacterEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteDao {
 
     @Query("SELECT * FROM character_table")
+    fun getAllFavoritesFlow(): Flow<List<CharacterEntity>>
+
+    @Query("SELECT * FROM character_table")
     suspend fun getAllFavorites(): List<CharacterEntity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(character: CharacterEntity)
 
     @Delete
