@@ -20,7 +20,7 @@ class FavoriteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveFavoriteCharacter(character: MarvelCharacter) {
-        favoriteDao.insert(character.toEntity())
+        favoriteDao.replaceOldestIfNeeded(character.toEntity())
     }
 
     override suspend fun deleteFavoriteCharacter(character: MarvelCharacter) {
