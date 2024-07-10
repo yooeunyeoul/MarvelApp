@@ -6,6 +6,4 @@ data class UiMarvelCharacter(
     val description: String,
     val thumbnailUrl: String,
     val isFavorite: Boolean,
-    val loading: Boolean = false,
-    val error: String? = null
 )

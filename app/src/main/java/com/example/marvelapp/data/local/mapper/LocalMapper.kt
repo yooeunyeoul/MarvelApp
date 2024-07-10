@@ -19,6 +19,7 @@ fun MarvelCharacter.toEntity(): CharacterEntity {
         name = this.name,
         description = this.description,
         thumbnailUrl = this.thumbnailUrl,
-        isFavorite = this.isFavorite
+        isFavorite = true,
+        addedAt = System.currentTimeMillis()
     )
 }

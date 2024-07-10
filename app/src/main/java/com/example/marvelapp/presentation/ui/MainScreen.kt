@@ -1,6 +1,7 @@
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
@@ -10,13 +11,13 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.marvelapp.presentation.ui.FavoriteScreen
 import com.example.marvelapp.presentation.ui.SearchScreen
 import com.example.marvelapp.presentation.ui.components.SetupPagination
@@ -32,17 +33,18 @@ import kotlinx.coroutines.launch
 fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState()
 
-    val searchQuery by viewModel.searchQuery.collectAsState()
-    val searchResults by viewModel.uiSearchResults.collectAsState()
-    val uiFavorites by viewModel.uiFavorites.collectAsState()
+    val searchResults by viewModel.uiSearchResults.collectAsStateWithLifecycle()
+    val uiFavorites by viewModel.uiFavorites.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val searchScrollState = rememberLazyGridState()
+    val favoriteScrollState = rememberLazyGridState()
 
     val tabs = listOf("Search" to Icons.Default.Search, "Favorite" to Icons.Default.Favorite)
 
-    val loadMoreItems = { viewModel.searchBooks(searchQuery) }
+    val loadMoreItems = { viewModel.loadMoreCharacters(searchResults.searchQuery) }
 
     SetupPagination(
-        viewModel.searchScrollState,
+        searchScrollState,
         searchResults.characters.size,
         searchResults.characters.size < searchResults.total,
         isLoading = searchResults.loading,
@@ -61,7 +63,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
             ) { page ->
                 when (page) {
                     0 -> SearchScreen(
-                        searchQuery = searchQuery,
+                        searchQuery = searchResults.searchQuery,
                         searchResults = searchResults.characters.toImmutableList(),
                         onSearchQueryChanged = viewModel::onSearchQueryChanged,
                         onFavoriteClick = { character ->
@@ -73,13 +75,13 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
                         },
                         isLoading = searchResults.loading,
                         error = searchResults.error,
-                        scrollState = viewModel.searchScrollState
+                        scrollState = searchScrollState
                     )
 
                     1 -> FavoriteScreen(
                         favoriteCharacters = uiFavorites.characters.toImmutableList(),
                         onRemoveFavorite = viewModel::removeFavorite,
-                        scrollState = viewModel.favoriteScrollState
+                        scrollState = favoriteScrollState
                     )
                 }
             }

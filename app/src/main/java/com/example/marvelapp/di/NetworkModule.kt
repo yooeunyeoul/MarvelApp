@@ -1,5 +1,6 @@
 package com.example.marvelapp.di
 
+import PrettyLoggingInterceptor
 import com.example.marvelapp.BuildConfig
 import com.example.marvelapp.data.remote.api.MarvelApiService
 import dagger.Module
@@ -7,7 +8,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -20,19 +20,17 @@ object NetworkModule {
 
     private const val BASE_URL = "https://gateway.marvel.com/v1/public/"
 
+
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
         return OkHttpClient.Builder()
-            .addInterceptor(logging)
+            .addInterceptor(PrettyLoggingInterceptor())
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {

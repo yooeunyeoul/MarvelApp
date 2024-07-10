@@ -8,6 +8,7 @@ data class CharacterEntity(
     @PrimaryKey val id: Int,
     val name: String,
     val description: String,
-    val thumbnailUrl:String,
-    val isFavorite: Boolean
+    val thumbnailUrl: String,
+    val isFavorite: Boolean,
+    val addedAt: Long // 추가된 시간 기록을 위한 필드
 )
