@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.marvelapp.presentation.ui.FavoriteScreen
 import com.example.marvelapp.presentation.ui.SearchScreen
 import com.example.marvelapp.presentation.ui.components.SetupPagination
@@ -32,9 +33,9 @@ import kotlinx.coroutines.launch
 fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState()
 
-    val searchQuery by viewModel.searchQuery.collectAsState()
-    val searchResults by viewModel.uiSearchResults.collectAsState()
-    val uiFavorites by viewModel.uiFavorites.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchResults by viewModel.uiSearchResults.collectAsStateWithLifecycle()
+    val uiFavorites by viewModel.uiFavorites.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     val tabs = listOf("Search" to Icons.Default.Search, "Favorite" to Icons.Default.Favorite)

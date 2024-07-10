@@ -58,14 +58,20 @@ class MainViewModel @Inject constructor(
                         _uiSearchResults.update { it.copy(loading = true, error = null) }
                         try {
                             getCharactersUseCase(query, currentOffset).collect { result ->
-                                _uiSearchResults.update { result }
+                                _uiSearchResults.update {
+                                    UiSearchCharactersState(
+                                        total = result.total,
+                                        characters = result.characters.map { it.toUiModel() },
+                                        loading = false,
+                                        error = null
+                                    )
+
+                                }
                             }
                         } catch (e: Exception) {
                             if (e !is CancellationException) {
                                 _uiSearchResults.update { it.copy(error = e.message) }
                             }
-                        } finally {
-                            _uiSearchResults.update { it.copy(loading = false) }
                         }
                     }
                 }
@@ -117,11 +123,11 @@ class MainViewModel @Inject constructor(
             getCharactersUseCase(query, offset = currentOffset)
                 .collect { result ->
                     _uiSearchResults.update {
-                        it.copy(
-                            characters = it.characters + result.characters,
-                            loading = false,
+                        UiSearchCharactersState(
                             total = result.total,
-                            error = result.error
+                            characters = it.characters + result.characters.map { it.toUiModel() },
+                            loading = false,
+                            error = null
                         )
                     }
                 }
