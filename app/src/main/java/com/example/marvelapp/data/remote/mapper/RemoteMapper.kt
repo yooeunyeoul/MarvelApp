@@ -3,9 +3,13 @@ package com.example.marvelapp.data.remote.mapper
 import com.example.marvelapp.data.remote.dto.MarvelApiResponseDto
 import com.example.marvelapp.data.remote.dto.MarvelCharacterDto
 import com.example.marvelapp.domain.model.MarvelCharacter
+import com.example.marvelapp.domain.model.MarvelCharacterList
 
-fun MarvelApiResponseDto.toDomain(): List<MarvelCharacter> {
-    return this.data.results.map { it.toDomain() }
+fun MarvelApiResponseDto.toDomain(): MarvelCharacterList {
+    return MarvelCharacterList(
+        total = this.data.total,
+        characters = this.data.results.map { it.toDomain() }
+    )
 }
 
 fun MarvelCharacterDto.toDomain(): MarvelCharacter {

@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteDao {
 
-    @Query("SELECT * FROM character_table")
+    @Query("SELECT * FROM character_table ORDER BY addedAt ASC")
     fun getAllFavoritesFlow(): Flow<List<CharacterEntity>>
 
-    @Query("SELECT * FROM character_table")
+    @Query("SELECT * FROM character_table ORDER BY addedAt ASC")
     suspend fun getAllFavorites(): List<CharacterEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

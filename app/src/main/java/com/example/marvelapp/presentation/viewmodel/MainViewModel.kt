@@ -3,6 +3,7 @@ package com.example.marvelapp.presentation.viewmodel
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.marvelapp.presentation.mapper.toDomain
 import com.example.marvelapp.domain.usecase.AddFavoriteCharacterUseCase
 import com.example.marvelapp.domain.usecase.GetCharactersUseCase
 import com.example.marvelapp.domain.usecase.GetFavoriteCharactersUseCase
@@ -84,13 +85,13 @@ class MainViewModel @Inject constructor(
 
     fun addFavorite(character: UiMarvelCharacter) {
         viewModelScope.launch {
-            addFavoriteCharacterUseCase(character)
+            addFavoriteCharacterUseCase(character.toDomain())
         }
     }
 
     fun removeFavorite(character: UiMarvelCharacter) {
         viewModelScope.launch {
-            removeFavoriteCharacterUseCase(character)
+            removeFavoriteCharacterUseCase(character.toDomain())
         }
     }
 
