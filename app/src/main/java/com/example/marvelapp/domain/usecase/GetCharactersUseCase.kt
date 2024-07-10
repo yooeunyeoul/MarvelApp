@@ -3,10 +3,10 @@ package com.example.marvelapp.domain.usecase
 import com.example.marvelapp.domain.model.MarvelCharacterList
 import com.example.marvelapp.domain.repository.CharacterRepository
 import com.example.marvelapp.domain.repository.FavoriteRepository
+import com.example.marvelapp.domain.util.ResultState
+import com.example.marvelapp.domain.util.asResult
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class GetCharactersUseCase @Inject constructor(
         nameStartsWith: String,
         offset: Int = 0,
         limit: Int = 10
-    ): Flow<MarvelCharacterList> {
+    ): Flow<ResultState<MarvelCharacterList>> {
         val charactersFlow = characterRepository.getCharacters(nameStartsWith, offset, limit)
         val favoritesFlow = flow { emit(favoriteRepository.getFavoriteCharacterIds()) }
 
@@ -29,8 +29,6 @@ class GetCharactersUseCase @Inject constructor(
                     character.copy(isFavorite = favoriteIds.contains(character.id))
                 }
             )
-        }.catch { e ->
-            emit(MarvelCharacterList(total = 0, characters = emptyList()))
-        }
+        }.asResult()
     }
 }
