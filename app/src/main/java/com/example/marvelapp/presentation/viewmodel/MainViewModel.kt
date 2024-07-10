@@ -1,12 +1,14 @@
 package com.example.marvelapp.presentation.viewmodel
 
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.marvelapp.domain.model.MarvelCharacter
+import com.example.marvelapp.domain.model.MarvelCharacterList
 import com.example.marvelapp.domain.usecase.AddFavoriteCharacterUseCase
 import com.example.marvelapp.domain.usecase.GetCharactersUseCase
 import com.example.marvelapp.domain.usecase.GetFavoriteCharactersUseCase
 import com.example.marvelapp.domain.usecase.RemoveFavoriteCharacterUseCase
+import com.example.marvelapp.domain.util.ResultState
 import com.example.marvelapp.presentation.mapper.toDomain
 import com.example.marvelapp.presentation.mapper.toUiModel
 import com.example.marvelapp.presentation.model.UiFavoriteCharactersState
@@ -41,54 +43,96 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiSearchResults
-                .debounce(300)
-                .distinctUntilChanged { old, new -> old.searchQuery == new.searchQuery }
-                .collectLatest { state ->
-                    if (state.searchQuery.length >= 2) {
-                        _uiSearchResults.update {
-                            it.copy(
-                                loading = true,
-                                error = null,
-                                currentOffset = 0
-                            )
-                        }
-                        try {
-                            getCharactersUseCase(
-                                state.searchQuery,
-                                state.currentOffset
-                            ).collect { result ->
-                                _uiSearchResults.update {
-                                    it.copy(
-                                        total = result.total,
-                                        characters = result.characters.map { character -> character.toUiModel() },
-                                        loading = false,
-                                        error = null,
-                                        currentOffset = result.characters.count()
-                                    )
-                                }
-                            }
-                        } catch (e: Exception) {
-                            if (e !is CancellationException) {
-                                _uiSearchResults.update { it.copy(error = e.message) }
-                            }
-                        }
-                    }
-                }
+            handleSearchQuery()
         }
 
         viewModelScope.launch {
-            getFavoriteCharactersUseCase().collectLatest { favoriteCharacters ->
+            getFavoriteCharacters()
+        }
+    }
+
+    private suspend fun handleSearchQuery() {
+        _uiSearchResults
+            .debounce(300)
+            .distinctUntilChanged { old, new -> old.searchQuery == new.searchQuery }
+            .collectLatest { state ->
+                if (state.searchQuery.length >= 2) {
+                    fetchCharacters(state.searchQuery, state.currentOffset, reset = true)
+                }
+            }
+    }
+
+    private suspend fun getFavoriteCharacters() {
+        getFavoriteCharactersUseCase().collectLatest { result ->
+            handleFavoriteCharactersResult(result)
+        }
+    }
+
+    private suspend fun fetchCharacters(query: String, offset: Int, reset: Boolean = false) {
+        try {
+            getCharactersUseCase(query, offset).collect { result ->
+                handleSearchCharactersResult(result, reset)
+            }
+        } catch (e: Exception) {
+            if (e !is CancellationException) {
+                updateSearchResults { it.copy(error = e.message, loading = false) }
+            }
+        }
+    }
+
+    private fun handleSearchCharactersResult(
+        result: ResultState<MarvelCharacterList>,
+        reset: Boolean
+    ) {
+        when (result) {
+            is ResultState.Loading -> {
+                updateSearchResults { it.copy(loading = true) }
+            }
+
+            is ResultState.Success -> {
+                updateSearchResults {
+                    it.copy(
+                        total = result.data.total,
+                        characters = if (reset) result.data.characters.map { character -> character.toUiModel() }
+                        else it.characters + result.data.characters.map { character -> character.toUiModel() },
+                        loading = false,
+                        error = null,
+                        currentOffset = if (reset) 0 else it.currentOffset + result.data.characters.count()
+                    )
+                }
+            }
+
+            is ResultState.Error -> {
+                updateSearchResults { it.copy(error = result.exception.message, loading = false) }
+            }
+        }
+    }
+
+    private fun handleFavoriteCharactersResult(result: ResultState<List<MarvelCharacter>>) {
+        when (result) {
+            is ResultState.Loading -> {
+                _uiFavorites.update { it.copy(loading = true) }
+            }
+
+            is ResultState.Success -> {
                 _uiFavorites.update {
                     UiFavoriteCharactersState(
-                        characters = favoriteCharacters.map { it.toUiModel() },
+                        characters = result.data.map { it.toUiModel() },
                         loading = false,
                         error = null
                     )
                 }
-                updateFavoriteStatus(favoriteCharacters.map { it.id })
+                updateFavoriteStatus(result.data.map { it.id })
+            }
+
+            is ResultState.Error -> {
+                _uiFavorites.update { it.copy(error = result.exception.message, loading = false) }
             }
         }
+    }
+
+    private fun updateSearchResults(update: (UiSearchCharactersState) -> UiSearchCharactersState) {
+        _uiSearchResults.update(update)
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -108,7 +152,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateFavoriteStatus(favoriteIds: List<Int>) {
-        _uiSearchResults.update { searchResults ->
+        updateSearchResults { searchResults ->
             val updatedCharacters = searchResults.characters.map { character ->
                 character.copy(isFavorite = favoriteIds.contains(character.id))
             }
@@ -117,25 +161,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun loadMoreCharacters(query: String) {
-
         viewModelScope.launch {
-            _uiSearchResults.update {
-                it.copy(
-                    loading = true,
-                    currentOffset = it.currentOffset + 10
-                )
-            }
-            getCharactersUseCase(query, offset = _uiSearchResults.value.currentOffset)
-                .collect { result ->
-                    _uiSearchResults.update {
-                        it.copy(
-                            total = result.total,
-                            characters = it.characters + result.characters.map { character -> character.toUiModel() },
-                            loading = false,
-                            error = null
-                        )
-                    }
-                }
+            fetchCharacters(query, _uiSearchResults.value.currentOffset)
         }
     }
 }
