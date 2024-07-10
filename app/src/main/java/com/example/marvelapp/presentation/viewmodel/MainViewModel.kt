@@ -33,9 +33,6 @@ class MainViewModel @Inject constructor(
     private val getFavoriteCharactersUseCase: GetFavoriteCharactersUseCase
 ) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery
-
     private val _uiSearchResults = MutableStateFlow(UiSearchCharactersState())
     val uiSearchResults: StateFlow<UiSearchCharactersState> = _uiSearchResults
 
@@ -45,27 +42,33 @@ class MainViewModel @Inject constructor(
     val searchScrollState = LazyGridState()
     val favoriteScrollState = LazyGridState()
 
-    private var currentOffset = 0
-
     init {
         viewModelScope.launch {
-            _searchQuery
+            _uiSearchResults
                 .debounce(300)
-                .distinctUntilChanged()
-                .collectLatest { query ->
-                    if (query.length >= 2) {
-                        currentOffset = 0
-                        _uiSearchResults.update { it.copy(loading = true, error = null) }
+                .distinctUntilChanged { old, new -> old.searchQuery == new.searchQuery }
+                .collectLatest { state ->
+                    if (state.searchQuery.length >= 2) {
+                        _uiSearchResults.update {
+                            it.copy(
+                                loading = true,
+                                error = null,
+                                currentOffset = 0
+                            )
+                        }
                         try {
-                            getCharactersUseCase(query, currentOffset).collect { result ->
+                            getCharactersUseCase(
+                                state.searchQuery,
+                                state.currentOffset
+                            ).collect { result ->
                                 _uiSearchResults.update {
-                                    UiSearchCharactersState(
+                                    it.copy(
                                         total = result.total,
-                                        characters = result.characters.map { it.toUiModel() },
+                                        characters = result.characters.map { character -> character.toUiModel() },
                                         loading = false,
-                                        error = null
+                                        error = null,
+                                        currentOffset = result.characters.count()
                                     )
-
                                 }
                             }
                         } catch (e: Exception) {
@@ -92,7 +95,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun onSearchQueryChanged(query: String) {
-        _searchQuery.value = query
+        _uiSearchResults.update { it.copy(searchQuery = query, currentOffset = 0) }
     }
 
     fun addFavorite(character: UiMarvelCharacter) {
@@ -116,16 +119,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun searchBooks(query: String) {
+    fun loadMoreCharacters(query: String) {
+
         viewModelScope.launch {
-            _uiSearchResults.update { it.copy(loading = true) }
-            currentOffset += 10
-            getCharactersUseCase(query, offset = currentOffset)
+            _uiSearchResults.update {
+                it.copy(
+                    loading = true,
+                    currentOffset = it.currentOffset + 10
+                )
+            }
+            getCharactersUseCase(query, offset = _uiSearchResults.value.currentOffset)
                 .collect { result ->
                     _uiSearchResults.update {
-                        UiSearchCharactersState(
+                        it.copy(
                             total = result.total,
-                            characters = it.characters + result.characters.map { it.toUiModel() },
+                            characters = it.characters + result.characters.map { character -> character.toUiModel() },
                             loading = false,
                             error = null
                         )

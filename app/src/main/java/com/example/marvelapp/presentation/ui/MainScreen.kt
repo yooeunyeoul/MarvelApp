@@ -10,7 +10,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -33,14 +32,13 @@ import kotlinx.coroutines.launch
 fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState()
 
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults by viewModel.uiSearchResults.collectAsStateWithLifecycle()
     val uiFavorites by viewModel.uiFavorites.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     val tabs = listOf("Search" to Icons.Default.Search, "Favorite" to Icons.Default.Favorite)
 
-    val loadMoreItems = { viewModel.searchBooks(searchQuery) }
+    val loadMoreItems = { viewModel.loadMoreCharacters(searchResults.searchQuery) }
 
     SetupPagination(
         viewModel.searchScrollState,
@@ -62,7 +60,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
             ) { page ->
                 when (page) {
                     0 -> SearchScreen(
-                        searchQuery = searchQuery,
+                        searchQuery = searchResults.searchQuery,
                         searchResults = searchResults.characters.toImmutableList(),
                         onSearchQueryChanged = viewModel::onSearchQueryChanged,
                         onFavoriteClick = { character ->
