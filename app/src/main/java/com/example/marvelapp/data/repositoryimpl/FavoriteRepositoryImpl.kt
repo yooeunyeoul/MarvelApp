@@ -17,7 +17,7 @@ class FavoriteRepositoryImpl @Inject constructor(
         return favoriteDao.getAllFavorites().map { it.id }
     }
 
-    override suspend fun getFavoriteCharacters(): Flow<List<MarvelCharacter>> {
+    override fun getFavoriteCharacters(): Flow<List<MarvelCharacter>> {
         return favoriteDao.getAllFavoritesFlow().map { entities ->
             entities.map { it.toDomain() }
         }

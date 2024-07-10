@@ -3,17 +3,17 @@ package com.example.marvelapp.presentation.viewmodel
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.marvelapp.presentation.mapper.toDomain
 import com.example.marvelapp.domain.usecase.AddFavoriteCharacterUseCase
 import com.example.marvelapp.domain.usecase.GetCharactersUseCase
 import com.example.marvelapp.domain.usecase.GetFavoriteCharactersUseCase
 import com.example.marvelapp.domain.usecase.RemoveFavoriteCharacterUseCase
+import com.example.marvelapp.presentation.mapper.toDomain
+import com.example.marvelapp.presentation.mapper.toUiModel
 import com.example.marvelapp.presentation.model.UiFavoriteCharactersState
 import com.example.marvelapp.presentation.model.UiMarvelCharacter
 import com.example.marvelapp.presentation.model.UiSearchCharactersState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -73,8 +73,14 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             getFavoriteCharactersUseCase().collectLatest { favoriteCharacters ->
-                _uiFavorites.update { favoriteCharacters }
-                updateFavoriteStatus(favoriteCharacters.characters.map { it.id })
+                _uiFavorites.update {
+                    UiFavoriteCharactersState(
+                        characters = favoriteCharacters.map { it.toUiModel() },
+                        loading = false,
+                        error = null
+                    )
+                }
+                updateFavoriteStatus(favoriteCharacters.map { it.id })
             }
         }
     }
