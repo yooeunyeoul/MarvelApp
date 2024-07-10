@@ -39,9 +39,6 @@ class MainViewModel @Inject constructor(
     private val _uiFavorites = MutableStateFlow(UiFavoriteCharactersState())
     val uiFavorites: StateFlow<UiFavoriteCharactersState> = _uiFavorites
 
-    val searchScrollState = LazyGridState()
-    val favoriteScrollState = LazyGridState()
-
     init {
         viewModelScope.launch {
             _uiSearchResults

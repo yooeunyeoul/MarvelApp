@@ -1,6 +1,7 @@
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
@@ -35,13 +36,15 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
     val searchResults by viewModel.uiSearchResults.collectAsStateWithLifecycle()
     val uiFavorites by viewModel.uiFavorites.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val searchScrollState = rememberLazyGridState()
+    val favoriteScrollState = rememberLazyGridState()
 
     val tabs = listOf("Search" to Icons.Default.Search, "Favorite" to Icons.Default.Favorite)
 
     val loadMoreItems = { viewModel.loadMoreCharacters(searchResults.searchQuery) }
 
     SetupPagination(
-        viewModel.searchScrollState,
+        searchScrollState,
         searchResults.characters.size,
         searchResults.characters.size < searchResults.total,
         isLoading = searchResults.loading,
@@ -72,13 +75,13 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
                         },
                         isLoading = searchResults.loading,
                         error = searchResults.error,
-                        scrollState = viewModel.searchScrollState
+                        scrollState = searchScrollState
                     )
 
                     1 -> FavoriteScreen(
                         favoriteCharacters = uiFavorites.characters.toImmutableList(),
                         onRemoveFavorite = viewModel::removeFavorite,
-                        scrollState = viewModel.favoriteScrollState
+                        scrollState = favoriteScrollState
                     )
                 }
             }
