@@ -11,6 +11,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +43,14 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
     val tabs = listOf("Search" to Icons.Default.Search, "Favorite" to Icons.Default.Favorite)
 
     val loadMoreItems = { viewModel.loadMoreCharacters(searchResults.searchQuery) }
+
+    LaunchedEffect(Unit) {
+        viewModel.initialize {
+            viewModel.handleSearchQuery()
+            viewModel.getFavoriteCharacters()
+        }
+    }
+
 
     SetupPagination(
         searchScrollState,
