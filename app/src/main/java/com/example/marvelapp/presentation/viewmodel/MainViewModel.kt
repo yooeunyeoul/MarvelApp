@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     private val addFavoriteCharacterUseCase: AddFavoriteCharacterUseCase,
     private val removeFavoriteCharacterUseCase: RemoveFavoriteCharacterUseCase,
     private val getFavoriteCharactersUseCase: GetFavoriteCharactersUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _uiSearchResults = MutableStateFlow(UiSearchCharactersState())
     val uiSearchResults: StateFlow<UiSearchCharactersState> = _uiSearchResults
@@ -41,31 +41,28 @@ class MainViewModel @Inject constructor(
     private val _uiFavorites = MutableStateFlow(UiFavoriteCharactersState())
     val uiFavorites: StateFlow<UiFavoriteCharactersState> = _uiFavorites
 
-    init {
-        viewModelScope.launch {
-            handleSearchQuery()
-        }
 
+    suspend fun handleSearchQuery() {
         viewModelScope.launch {
-            getFavoriteCharacters()
-        }
-    }
-
-    private suspend fun handleSearchQuery() {
-        _uiSearchResults
-            .debounce(300)
-            .distinctUntilChanged { old, new -> old.searchQuery == new.searchQuery }
-            .collectLatest { state ->
-                if (state.searchQuery.length >= 2) {
-                    fetchCharacters(state.searchQuery, state.currentOffset, reset = true)
+            _uiSearchResults
+                .debounce(300)
+                .distinctUntilChanged { old, new -> old.searchQuery == new.searchQuery }
+                .collectLatest { state ->
+                    if (state.searchQuery.length >= 2) {
+                        fetchCharacters(state.searchQuery, state.currentOffset, reset = true)
+                    }
                 }
-            }
+        }
+
     }
 
-    private suspend fun getFavoriteCharacters() {
-        getFavoriteCharactersUseCase().collectLatest { result ->
-            handleFavoriteCharactersResult(result)
+     suspend fun getFavoriteCharacters() {
+        viewModelScope.launch {
+            getFavoriteCharactersUseCase().collectLatest { result ->
+                handleFavoriteCharactersResult(result)
+            }
         }
+
     }
 
     private suspend fun fetchCharacters(query: String, offset: Int, reset: Boolean = false) {
@@ -97,7 +94,7 @@ class MainViewModel @Inject constructor(
                         else it.characters + result.data.characters.map { character -> character.toUiModel() },
                         loading = false,
                         error = null,
-                        currentOffset = if (reset) 0 else it.currentOffset + result.data.characters.count()
+                        currentOffset = it.currentOffset + result.data.characters.count()
                     )
                 }
             }
