@@ -112,6 +112,9 @@ dependencies {
         androidTestImplementation(libs.androidx.ui.test.junit4)
         debugImplementation(libs.androidx.ui.tooling)
         debugImplementation(libs.androidx.ui.test.manifest)
+        // MockK
+        testImplementation(libs.mockk)
+        testImplementation(libs.mockk.android)
 
         implementation(libs.kotlinxCollectionsImmutable)
 
