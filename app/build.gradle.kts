@@ -1,10 +1,12 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+//    alias(libs.plugins.androidApplication)
+//    alias(libs.plugins.jetbrainsKotlinAndroid)
+//    alias(libs.plugins.kapt)
+    alias(libs.plugins.sample.android.application)
     alias(libs.plugins.hiltPlugin)
-    alias(libs.plugins.kapt)
+
 }
 
 android {
