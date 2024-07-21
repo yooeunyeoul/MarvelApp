@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             with(pluginManager) {
                 apply("com.android.application")
-//                apply("dagger.hilt.android.plugin")
+                apply("dagger.hilt.android.plugin")
                 apply("org.jetbrains.kotlin.android")
                 apply("org.jetbrains.kotlin.kapt")
             }
@@ -38,7 +39,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureAndroid(commonExtension = this)
             }
 
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
                 add("implementation", libs.findLibrary("hilt.android").get())
                 add("kapt", libs.findLibrary("hilt.compiler").get())

@@ -6,7 +6,6 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.project
 
 @Suppress("UnstableApiUsage")
 internal fun Project.configureCompose(commonExtension: BaseExtension) {
@@ -24,6 +23,11 @@ internal fun Project.configureCompose(commonExtension: BaseExtension) {
 
         dependencies {
             add("implementation", platform(libs.findLibrary("androidx.compose.bom").get()))
+            add("implementation", libs.findLibrary("androidx.activity.compose").get())
+            add("implementation", libs.findLibrary("androidx.ui").get())
+            add("implementation", libs.findLibrary("androidx.ui.graphics").get())
+            add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
+            add("implementation", libs.findLibrary("androidx.material3").get())
             add("androidTestImplementation", libs.findLibrary("androidx.compose.ui.test.junit4").get())
         }
     }

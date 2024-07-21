@@ -22,3 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "MarvelApp"
 include(":app")
+include(":feature:chat")
+include(":core:ui")
+include(":domain")

@@ -25,10 +25,12 @@ mockk = "1.12.0"
 jetbrainsKotlinJvm = "1.9.0"
 androidGradlePlugin = "7.4.2"
 ksp = "1.9.10-1.0.13"
-androidxComposeCompiler = "1.5.14"
+androidxComposeCompiler = "1.5.1"
 
 
 jetbrainsKotlinJvmVersion = "1.9.0"
+appcompat = "1.7.0"
+material = "1.12.0"
 
 
 [libraries]
@@ -83,6 +85,8 @@ androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", ver
 
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui"}
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4"}
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -97,3 +101,4 @@ sample-android-library = { id = "sample.android.library", version = "unspecified
 sample-android-test = { id = "sample.android.test", version = "unspecified" }
 sample-compose = { id = "sample.compose", version = "unspecified" }
 sample-dynamic = { id = "sample.dynamic", version = "unspecified" }
+android-library = { id = "com.android.library", version.ref = "agp" }
