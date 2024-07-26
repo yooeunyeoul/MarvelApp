@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     alias(libs.plugins.sample.android.application)
     alias(libs.plugins.sample.compose)
@@ -73,16 +71,16 @@ dependencies {
 //        implementation(libs.androidx.ui.tooling.preview)
 //        implementation(libs.androidx.material3)
 
-        // lifecycle compose
-        implementation(libs.lifecycle.runtime.compose)
-
-        // navigation compose
-        implementation(libs.navigation.compose)
+//        // lifecycle compose
+//        implementation(libs.lifecycle.runtime.compose)
+//
+//        // navigation compose
+//        implementation(libs.navigation.compose)
 
         // Hilt
-        implementation(libs.hilt.android)
-        kapt(libs.hilt.compiler)
-        implementation(libs.hilt.navigation.compose)
+//        implementation(libs.hilt.android)
+//        kapt(libs.hilt.compiler)
+//        implementation(libs.hilt.navigation.compose)
 
         // retrofit
         implementation(libs.retrofit)
@@ -119,6 +117,10 @@ dependencies {
         implementation(libs.kotlinxCollectionsImmutable)
 
         implementation(libs.accompanist.pager)
+
+        implementation(project(":feature:on-boarding"))
+
+
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.marvelapp
 
-import MainScreen
+import ChooseHobbyScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +13,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MarvelAppTheme {
-                MainScreen()
+//                MainScreen()
+                ChooseHobbyScreen()
             }
         }
     }

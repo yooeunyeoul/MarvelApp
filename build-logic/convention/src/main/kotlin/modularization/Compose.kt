@@ -27,7 +27,12 @@ internal fun Project.configureCompose(commonExtension: BaseExtension) {
             add("implementation", libs.findLibrary("androidx.ui").get())
             add("implementation", libs.findLibrary("androidx.ui.graphics").get())
             add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
+            add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())
             add("implementation", libs.findLibrary("androidx.material3").get())
+            // lifecycle compose
+            add("implementation", libs.findLibrary("lifecycle.runtime.compose").get())
+            // navigation compose
+            add("implementation", libs.findLibrary("navigation.compose").get())
             add("androidTestImplementation", libs.findLibrary("androidx.compose.ui.test.junit4").get())
         }
     }
