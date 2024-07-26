@@ -50,11 +50,11 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("apiKey")
-    fun provideApiKey(): String = BuildConfig.MARVEL_PUBLIC_KEY
+    fun provideApiKey(): String = "155abac75167d4018511a57afa5fbc59"
 
     @Provides
     @Singleton
     @Named("privateKey")
-    fun providePrivateKey(): String = BuildConfig.MARVEL_PRIVATE_KEY
+    fun providePrivateKey(): String = "05e74c131167867f9f8ac7b9a5d5ed005f799b42"
 
 }
