@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,4 +22,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "MarvelApp"
 include(":app")
- 
+include(":feature:chat")
+include(":core:ui")
+include(":domain")
+include(":feature:intro-test")
+include(":feature:on-boarding")
